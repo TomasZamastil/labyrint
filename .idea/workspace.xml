@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b3b26ab5-7792-4dac-9d94-718ec5e009c7" name="Changes" comment="">
+    <list default="true" id="b47ca2c8-d3b6-4242-9040-88251984808d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/game/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/game/Camera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/game/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/game/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/maze/Mesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/maze/Mesh.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/game/Camera.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/game/Camera.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/game/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/game/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/maze/Mesh.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/maze/Mesh.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,28 +22,24 @@
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 2
+  &quot;associatedIndex&quot;: 1
 }</component>
-  <component name="ProjectId" id="3Ckaf33K7Fq1rppSgsJZUUp7cMn" />
+  <component name="ProjectId" id="3CfidM772oUajud13BBfyYXqNGe" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/macuk/Desktop/Labyrint/labyrint",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -53,14 +51,13 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="b3b26ab5-7792-4dac-9d94-718ec5e009c7" name="Changes" comment="" />
-      <created>1776932122836</created>
+      <changelist id="b47ca2c8-d3b6-4242-9040-88251984808d" name="Changes" comment="" />
+      <created>1776783112866</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1776932122836</updated>
-      <workItem from="1776932124424" duration="729000" />
-      <workItem from="1776940202277" duration="10000" />
-      <workItem from="1777008093851" duration="102000" />
+      <updated>1776783112866</updated>
+      <workItem from="1776783114383" duration="98000" />
+      <workItem from="1776783746278" duration="76000" />
     </task>
     <servers />
   </component>

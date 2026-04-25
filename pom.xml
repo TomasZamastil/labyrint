@@ -16,7 +16,6 @@
     </properties>
 
     <dependencies>
-        <!-- LWJGL core -->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
@@ -33,7 +32,6 @@
             <version>${lwjgl.version}</version>
         </dependency>
 
-        <!-- Natives - Windows -->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
@@ -53,7 +51,6 @@
             <classifier>natives-windows</classifier>
         </dependency>
 
-        <!-- Natives - Linux -->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
@@ -73,7 +70,6 @@
             <classifier>natives-linux</classifier>
         </dependency>
 
-        <!-- Natives - macOS -->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
@@ -92,7 +88,7 @@
             <version>${lwjgl.version}</version>
             <classifier>natives-macos</classifier>
         </dependency>
-        <!-- Natives - macOS ARM64 (Apple Silicon) -->
+
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl</artifactId>
