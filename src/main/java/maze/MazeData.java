@@ -2,7 +2,42 @@ package maze;
 
 public class MazeData {
 
-    public static final float[] WALLS = {
+    public static final float H = 3.0f;
+
+    public static final float[] WALLS_1 = {
+        0,0,18,0,   0,18,18,18,   0,0,0,18,   18,0,18,18,
+        0,3,3,3,   12,3,15,3,   3,6,6,6,   6,9,9,9,
+        3,12,6,12,   9,12,12,12,   15,12,18,12,   0,15,3,15,
+        3,15,6,15,   6,15,9,15,   12,15,15,15,   6,0,6,3,
+        6,3,6,6,   9,3,9,6,   12,3,12,6,   15,3,15,6,
+        3,6,3,9,   9,6,9,9,   12,6,12,9,   15,6,15,9,
+        3,9,3,12,   6,9,6,12,   12,9,12,12,   9,12,9,15,
+        12,12,12,15,
+    };
+    public static final float S_1 = 18.0f;
+
+    public static final float[] WALLS_2 = {
+        0,0,27,0,   0,27,27,27,   0,0,0,27,   27,0,27,27,
+        0,3,3,3,   3,3,6,3,   21,3,24,3,   3,6,6,6,
+        6,6,9,6,   9,6,12,6,   18,6,21,6,   15,9,18,9,
+        21,9,24,9,   0,12,3,12,   18,12,21,12,   3,15,6,15,
+        6,15,9,15,   9,15,12,15,   12,15,15,15,   15,15,18,15,
+        24,15,27,15,   6,18,9,18,   12,18,15,18,   15,18,18,18,
+        18,18,21,18,   3,21,6,21,   15,21,18,21,   18,21,21,21,
+        21,21,24,21,   9,24,12,24,   12,24,15,24,   15,24,18,24,
+        18,24,21,24,   21,24,24,24,   9,0,9,3,   15,0,15,3,
+        21,0,21,3,   6,3,6,6,   12,3,12,6,   15,3,15,6,
+        18,3,18,6,   24,3,24,6,   9,6,9,9,   12,6,12,9,
+        15,6,15,9,   21,6,21,9,   3,9,3,12,   6,9,6,12,
+        9,9,9,12,   12,9,12,12,   15,9,15,12,   21,9,21,12,
+        24,9,24,12,   6,12,6,15,   12,12,12,15,   18,12,18,15,
+        21,12,21,15,   3,15,3,18,   21,15,21,18,   24,15,24,18,
+        6,18,6,21,   12,18,12,21,   24,18,24,21,   3,21,3,24,
+        6,21,6,24,   9,21,9,24,   12,21,12,24,   6,24,6,27,
+    };
+    public static final float S_2 = 27.0f;
+
+    public static final float[] WALLS_3 = {
         0,0,36,0,    0,3,21,3,    30,3,33,3,   3,6,6,6,    24,6,30,6,
         0,9,3,9,     6,9,15,9,    21,9,33,9,   3,12,6,12,  15,12,18,12,
         21,12,24,12, 27,12,36,12, 3,15,9,15,   15,15,21,15, 30,15,33,15,
@@ -19,13 +54,26 @@ public class MazeData {
         27,24,27,27, 27,30,27,33, 30,3,30,6,   30,15,30,24,
         30,27,30,30, 33,6,33,9,   33,18,33,21, 33,30,33,36, 36,0,36,36,
     };
+    public static final float S_3 = 36.0f;
 
-    public static final float H = 3.0f;   
-    public static final float S = 36.0f;  
+    private static float[] currentWalls = WALLS_1;
+    private static float currentSize = S_1;
+
+    public static void setLevel(int level) {
+        switch (level) {
+            case 1: currentWalls = WALLS_1; currentSize = S_1; break;
+            case 2: currentWalls = WALLS_2; currentSize = S_2; break;
+            case 3: currentWalls = WALLS_3; currentSize = S_3; break;
+        }
+    }
+
+    public static float[] getWalls() { return currentWalls; }
+    public static float getSize()    { return currentSize; }
 
     public static boolean collides(float px, float pz, float radius) {
-        for (int i = 0; i < WALLS.length; i += 4) {
-            float x0=WALLS[i], z0=WALLS[i+1], x1=WALLS[i+2], z1=WALLS[i+3];
+        for (int i = 0; i < currentWalls.length; i += 4) {
+            float x0=currentWalls[i], z0=currentWalls[i+1],
+                  x1=currentWalls[i+2], z1=currentWalls[i+3];
             if (x0 == x1) {
                 float lo=Math.min(z0,z1), hi=Math.max(z0,z1);
                 if (pz>=lo-radius && pz<=hi+radius && Math.abs(px-x0)<radius) return true;

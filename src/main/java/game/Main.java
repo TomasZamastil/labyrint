@@ -2,6 +2,7 @@ package game;
 
 import maze.Mesh;
 import maze.GoalMesh;
+import maze.MazeData;
 
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -29,6 +30,11 @@ public class Main {
     private double prevMouseX = -1, prevMouseY = -1;
     private boolean mouseActive = true;
     private boolean showInfo = false;
+
+    
+    private enum State { MENU, PLAYING }
+    private State state = State.MENU;
+    private int selectedLevel = 0; 
 
     private static final String VERT =
         "#version 330 core\n" +
@@ -76,6 +82,7 @@ public class Main {
     private int prog2d, uTex2d;
     private int quadVao, quadVbo;
     private int winTex, hintTex, btnTex, infoPanelTex;
+    private int menuTex, lvl1Tex, lvl2Tex, lvl3Tex;
 
     public static void main(String[] args) { new Main().run(); }
 
@@ -108,14 +115,21 @@ public class Main {
         window = glfwCreateWindow(W, H, "Labyrint", monitor, NULL);
         if (window==NULL) throw new RuntimeException("window creation failed");
 
-        camera.addYaw((float)(Math.PI/2));
-
         glfwSetFramebufferSizeCallback(window, (win,w,h) -> { W=w; H=h; glViewport(0,0,w,h); });
 
         glfwSetKeyCallback(window, (win,key,sc,action,mods) -> {
-            if (key==GLFW_KEY_ESCAPE && action==GLFW_PRESS)
-                glfwSetWindowShouldClose(win, true);
-            if (key==GLFW_KEY_I && action==GLFW_PRESS) {
+            if (key==GLFW_KEY_ESCAPE && action==GLFW_PRESS) {
+                if (state == State.PLAYING) {
+                    
+                    state = State.MENU;
+                    won = false;
+                    glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                    mouseActive = false;
+                } else {
+                    glfwSetWindowShouldClose(win, true);
+                }
+            }
+            if (state == State.PLAYING && key==GLFW_KEY_I && action==GLFW_PRESS) {
                 mouseActive = !mouseActive;
                 if (mouseActive) {
                     glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -130,19 +144,35 @@ public class Main {
         });
 
         glfwSetMouseButtonCallback(window, (win,btn,action,mods) -> {
-            if (!mouseActive && btn==GLFW_MOUSE_BUTTON_LEFT && action==GLFW_PRESS) {
+            if (btn==GLFW_MOUSE_BUTTON_LEFT && action==GLFW_PRESS) {
                 try (MemoryStack s = stackPush()) {
                     DoubleBuffer mx = s.mallocDouble(1), my = s.mallocDouble(1);
                     glfwGetCursorPos(win, mx, my);
                     double cx=mx.get(0), cy=my.get(0);
-                    int btnSz=48, margin=12;
-                    float bx = W - btnSz - margin + btnSz/2f;
-                    float by = H - btnSz - margin + btnSz/2f;
-                    double dx=cx-bx, dy=cy-by;
-                    if (dx*dx+dy*dy < (btnSz/2.0)*(btnSz/2.0))
-                        showInfo = !showInfo;
-                    else
-                        showInfo = false;
+
+                    if (state == State.MENU) {
+                        
+                        int btnW=320, btnH=80, gap=40;
+                        int totalH = 3*btnH + 2*gap;
+                        int startY = (H - totalH) / 2 + 80;
+                        for (int lvl=1; lvl<=3; lvl++) {
+                            int bx = (W-btnW)/2;
+                            int by = startY + (lvl-1)*(btnH+gap);
+                            if (cx>=bx && cx<=bx+btnW && cy>=by && cy<=by+btnH) {
+                                startLevel(lvl);
+                            }
+                        }
+                    } else if (!mouseActive) {
+                        
+                        int btnSz=48, margin=12;
+                        float bx = W - btnSz - margin + btnSz/2f;
+                        float by = H - btnSz - margin + btnSz/2f;
+                        double dx=cx-bx, dy=cy-by;
+                        if (dx*dx+dy*dy < (btnSz/2.0)*(btnSz/2.0))
+                            showInfo = !showInfo;
+                        else
+                            showInfo = false;
+                    }
                 }
             }
         });
@@ -157,12 +187,10 @@ public class Main {
         glfwSwapInterval(1);
         glfwShowWindow(window);
 
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        if (glfwRawMouseMotionSupported())
-            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
         GL.createCapabilities();
-
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glEnable(GL_MULTISAMPLE);
@@ -200,13 +228,31 @@ public class Main {
         glEnableVertexAttribArray(0);
         glBindVertexArray(0);
 
+        
+        winTex       = buildWinTexture();
+        hintTex      = buildSimpleTex("Pro skryt\u00ed my\u0161i stiskni I", 520, 44, 20);
+        btnTex       = buildCircleTex(64, 64);
+        infoPanelTex = buildInfoPanelTex(480, 56);
+        menuTex      = buildMenuTexture();
+        lvl1Tex      = buildLevelButton("Lehk\u00e1", "6\u00d76 bludit\u011b", new java.awt.Color(46,139,87));
+        lvl2Tex      = buildLevelButton("St\u0159edn\u00ed", "9\u00d79 bludit\u011b", new java.awt.Color(205,133,0));
+        lvl3Tex      = buildLevelButton("T\u011b\u017ek\u00e1", "12\u00d712 bludit\u011b", new java.awt.Color(178,34,34));
+    }
+
+    private void startLevel(int level) {
+        selectedLevel = level;
+        MazeData.setLevel(level);
         maze.build();
         goal.build();
-
-        winTex      = buildWinTexture();
-        hintTex     = buildSimpleTex("Pro zobrazení myši stiskni i", 520, 44, 20);
-        btnTex      = buildCircleTex(64, 64);
-        infoPanelTex= buildInfoPanelTex(480, 56);
+        camera.reset();
+        won = false;
+        showInfo = false;
+        state = State.PLAYING;
+        mouseActive = true;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        if (glfwRawMouseMotionSupported())
+            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        prevMouseX = -1; prevMouseY = -1;
     }
 
     private int compileShader(int type, String src) {
@@ -221,49 +267,78 @@ public class Main {
     private void loop() {
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
-            processKeys();
 
-            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-            glUseProgram(prog);
-
-            float[] mvp=mul(perspective(), camera.viewMatrix());
-            glUniformMatrix4fv(uMVP, false, mvp);
-            glUniform3f(uLightPos, camera.x, camera.y, camera.z);
-            glUniform1f(uAmbient, 0.45f);
-            glUniform3f(uFogColor, 0.18f, 0.14f, 0.10f);
-            glUniform1f(uFogDensity, 0.004f);
-
-            glBindVertexArray(maze.vao);
-            glDrawArrays(GL_TRIANGLES, 0, maze.count);
-            glBindVertexArray(goal.vao);
-            glDrawArrays(GL_TRIANGLES, 0, goal.count);
-            glBindVertexArray(0);
-
-            float gdx=camera.x-GoalMesh.GX, gdz=camera.z-GoalMesh.GZ;
-            if (!won && gdx*gdx+gdz*gdz < 4.0f) won=true;
-
-            if (won) drawQuad(winTex, -1,-1, 2, 2);
-
-            if (mouseActive) {
-                int tw=520, th=44, margin=10;
-                drawQuad(hintTex,
-                    ndcX(margin,    tw), ndcY(H-margin-th, th),
-                    ndcW(tw),            ndcH(th));
-            }
-
-            int btnSz=48, margin=12;
-            drawQuad(btnTex,
-                ndcX(W-btnSz-margin, btnSz), ndcY(H-btnSz-margin, btnSz),
-                ndcW(btnSz),                  ndcH(btnSz));
-
-            if (showInfo) {
-                int pw=480, ph=56;
-                drawQuad(infoPanelTex,
-                    ndcX(W-pw-btnSz-margin*2, pw), ndcY(H-ph-(btnSz-ph)/2-margin, ph),
-                    ndcW(pw),                       ndcH(ph));
+            if (state == State.MENU) {
+                drawMenu();
+            } else {
+                processKeys();
+                drawGame();
             }
 
             glfwSwapBuffers(window);
+        }
+    }
+
+    private void drawMenu() {
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+        
+        drawQuad(menuTex, -1,-1, 2, 2);
+
+        
+        int btnW=320, btnH=80, gap=40;
+        int totalH = 3*btnH + 2*gap;
+        int startY = (H - totalH) / 2 + 80;
+
+        int[] texs = {lvl1Tex, lvl2Tex, lvl3Tex};
+        for (int i=0; i<3; i++) {
+            int bx = (W-btnW)/2;
+            int by = startY + i*(btnH+gap);
+            drawQuad(texs[i],
+                ndcX(bx, btnW), ndcY(by, btnH),
+                ndcW(btnW),     ndcH(btnH));
+        }
+    }
+
+    private void drawGame() {
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+        glUseProgram(prog);
+
+        float[] mvp=mul(perspective(), camera.viewMatrix());
+        glUniformMatrix4fv(uMVP, false, mvp);
+        glUniform3f(uLightPos, camera.x, camera.y, camera.z);
+        glUniform1f(uAmbient, 0.45f);
+        glUniform3f(uFogColor, 0.18f, 0.14f, 0.10f);
+        glUniform1f(uFogDensity, 0.004f);
+
+        glBindVertexArray(maze.vao);
+        glDrawArrays(GL_TRIANGLES, 0, maze.count);
+        glBindVertexArray(goal.vao);
+        glDrawArrays(GL_TRIANGLES, 0, goal.count);
+        glBindVertexArray(0);
+
+        float gdx=camera.x-goal.gx(), gdz=camera.z-goal.gz();
+        if (!won && gdx*gdx+gdz*gdz < 1.0f) won=true;
+
+        if (won) drawQuad(winTex, -1,-1, 2, 2);
+
+        if (mouseActive) {
+            int tw=520, th=44, margin=10;
+            drawQuad(hintTex,
+                ndcX(margin, tw), ndcY(H-margin-th, th),
+                ndcW(tw),         ndcH(th));
+        }
+
+        int btnSz=48, margin=12;
+        drawQuad(btnTex,
+            ndcX(W-btnSz-margin, btnSz), ndcY(H-btnSz-margin, btnSz),
+            ndcW(btnSz),                  ndcH(btnSz));
+
+        if (showInfo) {
+            int pw=480, ph=56;
+            drawQuad(infoPanelTex,
+                ndcX(W-pw-btnSz-margin*2, pw), ndcY(H-ph-(btnSz-ph)/2-margin, ph),
+                ndcW(pw),                       ndcH(ph));
         }
     }
 
@@ -316,6 +391,64 @@ public class Main {
         if (glfwGetKey(window,GLFW_KEY_A)==GLFW_PRESS) camera.moveRight(  -spd);
     }
 
+    private int buildMenuTexture() {
+        int tw=1920, th=1080;
+        java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(tw,th,java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g = img.createGraphics();
+        g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,      java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING, java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        
+        g.setColor(new java.awt.Color(10, 15, 30, 210));
+        g.fillRect(0, 0, tw, th);
+        
+        g.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 220));
+        g.setColor(new java.awt.Color(255, 255, 255));
+        String title = "LABYRINT";
+        java.awt.FontMetrics fm = g.getFontMetrics();
+        g.drawString(title, (tw - fm.stringWidth(title))/2, 300);
+        
+        g.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 72));
+        g.setColor(new java.awt.Color(180, 200, 255));
+        String sub = "Vyber obtížnost";
+        fm = g.getFontMetrics();
+        g.drawString(sub, (tw - fm.stringWidth(sub))/2, 430);
+        
+        g.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 42));
+        g.setColor(new java.awt.Color(120, 130, 150));
+        String esc = "ESC pro ukončení";
+        fm = g.getFontMetrics();
+        g.drawString(esc, (tw - fm.stringWidth(esc))/2, 1040);
+        g.dispose();
+        return uploadTex(img, tw, th);
+    }
+
+    private int buildLevelButton(String label, String sub, java.awt.Color color) {
+        int tw=1024, th=256;
+        java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(tw,th,java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g = img.createGraphics();
+        g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,      java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING, java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        
+        g.setColor(new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue(), 200));
+        g.fillRoundRect(0, 0, tw, th, 20, 20);
+        
+        g.setColor(new java.awt.Color(255,255,255,60));
+        g.setStroke(new java.awt.BasicStroke(2f));
+        g.drawRoundRect(1, 1, tw-2, th-2, 20, 20);
+        
+        g.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 96));
+        g.setColor(java.awt.Color.WHITE);
+        java.awt.FontMetrics fm = g.getFontMetrics();
+        g.drawString(label, (tw - fm.stringWidth(label))/2, 120);
+        
+        g.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 52));
+        g.setColor(new java.awt.Color(220, 220, 220));
+        fm = g.getFontMetrics();
+        g.drawString(sub, (tw - fm.stringWidth(sub))/2, 200);
+        g.dispose();
+        return uploadTex(img, tw, th);
+    }
+
     private int buildWinTexture() {
         int tw=2048, th=1024;
         java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(tw,th,java.awt.image.BufferedImage.TYPE_INT_ARGB);
@@ -332,7 +465,7 @@ public class Main {
         g.drawString(l1,(tw-fm.stringWidth(l1))/2,480);
         g.setFont(new java.awt.Font("Arial",java.awt.Font.PLAIN,80));
         g.setColor(new java.awt.Color(200,200,200));
-        String l2="Stiskni ESC pro ukončení";
+        String l2="Stiskni ESC pro návrat do menu";
         fm=g.getFontMetrics();
         g.drawString(l2,(tw-fm.stringWidth(l2))/2,660);
         g.dispose();
@@ -383,7 +516,7 @@ public class Main {
         g.setFont(new java.awt.Font("Arial",java.awt.Font.PLAIN,18));
         g.setColor(java.awt.Color.WHITE);
         java.awt.FontMetrics fm=g.getFontMetrics();
-        String s="Pro PGRF2 vytvořil Tomáš Zamastil \u00A9 2026";
+        String s="Pro PGRF2 vytvo\u0159il Tom\u00e1\u0161 Zamastil \u00A9 2026";
         g.drawString(s,(tw-fm.stringWidth(s))/2, th/2+fm.getAscent()/2-2);
         g.dispose();
         return uploadTex(img,tw,th);

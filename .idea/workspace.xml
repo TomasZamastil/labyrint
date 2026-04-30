@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b47ca2c8-d3b6-4242-9040-88251984808d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/game/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/game/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/game/Camera.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/game/Camera.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/game/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/game/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/maze/Mesh.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/maze/Mesh.class" afterDir="false" />
-    </list>
+    <list default="true" id="b47ca2c8-d3b6-4242-9040-88251984808d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -36,6 +29,10 @@
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/macuk/Desktop/Labyrint/labyrint",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -58,6 +55,7 @@
       <updated>1776783112866</updated>
       <workItem from="1776783114383" duration="98000" />
       <workItem from="1776783746278" duration="76000" />
+      <workItem from="1777537379417" duration="709000" />
     </task>
     <servers />
   </component>
